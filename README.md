@@ -23,6 +23,6 @@
 
 ## 🌐 Live Demo
               You can try the live version of the project here:  
-              [**Medicine Reminder – Live Demo**](https://your-username.github.io/Medic_Remainder/)
+              **Medicine Reminder – Live Demo** (https://medic-remainder.netlify.app/)
 
 
