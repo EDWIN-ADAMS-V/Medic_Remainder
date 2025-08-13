@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Reminder</title>
+    <meta name="description" content="Never miss your medicine with smart reminders">
+    <meta name="theme-color" content="#4F46E5">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTWVkaWNpbmUgUmVtaW5kZXIiLCJzaG9ydF9uYW1lIjoiTWVkUmVtaW5kZXIiLCJkZXNjcmlwdGlvbiI6Ik5ldmVyIG1pc3MgeW91ciBtZWRpY2luZSB3aXRoIHNtYXJ0IHJlbWluZGVycyIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjRkZGRkZGIiwidGhlbWVfY29sb3IiOiIjNEY0NkU1IiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjNhV1IwYUQwaU1USTRJaUJvWldsbmFIUTlJakV5T0NJZ2RtbGxkMEp2ZUQwaU1DQXdJREV5T0NBeU9EZ2lJR1pwYkd3OUlpTTBSalEyUlRVaVBqeHdZWFJvSUdROUlrMDJOQ0F4TkRSaE5EUWdORFFnTUNBd01TQTRPQzB6TWlBNE9DMHpNbUV6TWlBek1pQXdJREF4TFRZMElEWTBlaUl2UGp4d1lYUm9JR1E5SWsweE1EUWdNVGMySUdFNElEZ2dNQ0F3TVNBME5DMDBOSFl0TkRSaE5EUWdORFFnTUNBd01TMDRJRGhvTFRJNGRqUTBZVGcwSURnZ01DQXdNUzA0TFRoMkxUSTRlaUl2UGp4d1lYUm9JR1E5SWsweE1EUWdNVGMySUdFNElEZ2dNQ0F3TVNBME5DMDBOSFl0TkRSaE5EUWdORFFnTUNBd01TMDRJRGhvTFRJNGRqUTBZVGcwSURnZ01DQXdNUzA0TFRoMkxUSTRlaUl2UGp3dmMzWm5QZz09IiwidHlwZSI6ImltYWdlL3N2Zyt4bWwiLCJzaXplcyI6IjEyOHgxMjgifV19">
+    
+    <style>
+        /* CSS Variables for Theme Management */
+        :root {
+            --primary-color: #4F46E5;
+            --primary-dark: #3730A3;
+            --secondary-color: #10B981;
+            --danger-color: #EF4444;
+            --warning-color: #F59E0B;
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --border-color: #E5E7EB;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #111827;
+            --card-bg: #1F2937;
+            --text-primary: #F9FAFB;
+            --text-secondary: #D1D5DB;
+            --border-color: #374151;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 0.25rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Search and Filter */
+        .search-filter {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Reminder List */
+        .reminder-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .reminder-item:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .reminder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .reminder-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .reminder-category {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .category-morning {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .category-afternoon {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .category-night {
+            background: #E0E7FF;
+            color: #3730A3;
+        }
+
+        .reminder-times {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .time-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+
+        .reminder-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        /* Stock Tracker */
+        .stock-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .stock-low {
+            color: var(--danger-color);
+        }
+
+        .stock-medium {
+            color: var(--warning-color);
+        }
+
+        .stock-good {
+            color: var(--secondary-color);
+        }
+
+        /* Time Inputs Container */
+        .time-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .time-input-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .remove-time {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .add-time {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: var(--shadow-lg);
+            z-index: 1001;
+            max-width: 300px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+
+            .search-filter {
+                grid-template-columns: 1fr;
+            }
+
+            .reminder-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .reminder-actions {
+                flex-wrap: wrap;
+            }
+
+            .time-input-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .remove-time {
+                align-self: flex-end;
+            }
+        }
+
+        /* Hidden class for tab content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Pulse animation for urgent notifications */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(79, 70, 229, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+            }
+        }
+
+        /* Enhanced notification styles */
+        .notification-urgent {
+            border: 2px solid var(--danger-color) !important;
+            animation: pulse 1.5s infinite;
+        }
+
+        .notification-urgent::before {
+            content: '🚨';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+
+        /* Star Rating Styles */
+        .star-rating {
+            display: flex;
+            gap: 0.25rem;
+            margin: 0.5rem 0;
+        }
+
+        .star {
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            opacity: 0.3;
+        }
+
+        .star:hover,
+        .star.active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .star.active {
+            filter: drop-shadow(0 0 3px #ffd700);
+        }
+
+        /* Review Item Styles */
+        .review-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .review-item:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-1px);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .review-author {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .review-date {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .review-stars {
+            font-size: 1rem;
+        }
+
+        .review-message {
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin-top: 0.5rem;
+        }
+
+        /* Textarea styling */
+        textarea.form-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    Medicine Reminder
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('add')">Add Reminder</button>
+            <button class="nav-tab" onclick="switchTab('list')">My Reminders</button>
+            <button class="nav-tab" onclick="switchTab('history')">History</button>
+            <button class="nav-tab" onclick="switchTab('settings')">Settings</button>
+            <button class="nav-tab" onclick="switchTab('feedback')">Feedback</button>
+            <button class="nav-tab" onclick="switchTab('reviews')">Reviews</button>
+        </nav>
+
+        <!-- Add Reminder Tab -->
+        <div id="add-tab" class="tab-content active">
+            <div class="card">
+                <h2 class="card-title">Add New Reminder</h2>
+                <form id="reminder-form">
+                    <div class="form-group">
+                        <label class="form-label" for="medicine-name">Medicine Name *</label>
+                        <input type="text" id="medicine-name" class="form-input" required placeholder="Enter medicine name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Reminder Times *</label>
+                        <div class="time-inputs" id="time-inputs">
+                            <div class="time-input-row">
+                                <input type="time" class="form-input time-input" required>
+                            </div>
+                        </div>
+                        <button type="button" class="add-time" onclick="addTimeInput()">+ Add Another Time</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="category">Category</label>
+                        <select id="category" class="form-select">
+                            <option value="morning">Morning</option>
+                            <option value="afternoon">Afternoon</option>
+                            <option value="night">Night</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="frequency">Frequency</label>
+                        <select id="frequency" class="form-select">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="stock">Pills in Stock</label>
+                        <input type="number" id="stock" class="form-input" min="0" placeholder="Number of pills remaining">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="notes">Notes</label>
+                        <input type="text" id="notes" class="form-input" placeholder="e.g., After food, With water">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                        </svg>
+                        Add Reminder
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Reminders List Tab -->
+        <div id="list-tab" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">Active Reminders</h2>
+                <div class="search-filter">
+                    <input type="text" id="search-input" class="form-input" placeholder="Search medicines...">
+                    <select id="filter-category" class="form-select">
+                        <option value="">All Categories</option>
+                        <option value="morning">Morning</option>
+                        <option value="afternoon">Afternoon</option>
+                        <option value="night">Night</option>
+                    </select>
+                </div>
+                <div id="reminders-list"></div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history-tab" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">Medicine History</h2>
+                <div id="history-list"></div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">Settings</h2>
+                
+                <div class="form-group">
+                    <label class="form-label">Notification Sound</label>
+                    <select id="notification-sound" class="form-select">
+                        <option value="beep">Beep</option>
+                        <option value="chime">Chime</option>
+                        <option value="bell">Bell</option>
+                    </select>
+                    <button type="button" class="btn btn-secondary btn-small" onclick="testSound()" style="margin-top: 0.5rem;">Test Sound</button>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Low Stock Alert (pills remaining)</label>
+                    <input type="number" id="low-stock-threshold" class="form-input" min="1" max="50" value="5">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notification Testing</label>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-secondary btn-small" onclick="testNotificationPermission()">Check Permissions</button>
+                        <button type="button" class="btn btn-primary btn-small" onclick="testNotification()">Test Notification</button>
+                    </div>
+                    <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">Use these buttons to test if notifications are working properly</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Current Time (for testing)</label>
+                    <div id="current-time" style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color); padding: 1rem; background: var(--bg-color); border-radius: 8px; text-align: center;"></div>
+                </div>
+
+                <div class="form-group">
+                    <button type="button" class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Tab -->
+        <div id="feedback-tab" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">Share Your Feedback</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">We'd love to hear about your experience with Medicine Reminder! Your feedback helps us improve.</p>
+                
+                <form id="feedback-form">
+                    <div class="form-group">
+                        <label class="form-label" for="feedback-name">Your Name *</label>
+                        <input type="text" id="feedback-name" class="form-input" required placeholder="Enter your name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Rate Your Experience *</label>
+                        <div class="star-rating" id="star-rating">
+                            <span class="star" data-rating="1">⭐</span>
+                            <span class="star" data-rating="2">⭐</span>
+                            <span class="star" data-rating="3">⭐</span>
+                            <span class="star" data-rating="4">⭐</span>
+                            <span class="star" data-rating="5">⭐</span>
+                        </div>
+                        <input type="hidden" id="feedback-rating" required>
+                        <small style="color: var(--text-secondary);">Click on stars to rate (1-5 stars)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="feedback-message">Your Feedback *</label>
+                        <textarea id="feedback-message" class="form-input" rows="4" required placeholder="Tell us about your experience, suggestions, or any issues you encountered..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="feedback-email">Email (Optional)</label>
+                        <input type="email" id="feedback-email" class="form-input" placeholder="Your email for follow-up (optional)">
+                        <small style="color: var(--text-secondary);">We'll only use this to respond to your feedback if needed</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                        Submit Feedback
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Reviews Tab -->
+        <div id="reviews-tab" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">User Reviews</h2>
+                <div class="reviews-summary" style="margin-bottom: 2rem; padding: 1rem; background: var(--bg-color); border-radius: 8px;" id="reviews-summary">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary-color);" id="average-rating">0.0</div>
+                        <div>
+                            <div class="star-display" id="average-stars">☆☆☆☆☆</div>
+                            <div style="color: var(--text-secondary); font-size: 0.875rem;" id="total-reviews">No reviews yet</div>
+                        </div>
+                    </div>
+                    <div class="rating-breakdown" id="rating-breakdown">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                            <span>5⭐</span>
+                            <div style="flex: 1; height: 8px; background: var(--border-color); border-radius: 4px;">
+                                <div style="width: 0%; height: 100%; background: var(--secondary-color); border-radius: 4px;"></div>
+                            </div>
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">0</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                            <span>4⭐</span>
+                            <div style="flex: 1; height: 8px; background: var(--border-color); border-radius: 4px;">
+                                <div style="width: 0%; height: 100%; background: var(--secondary-color); border-radius: 4px;"></div>
+                            </div>
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">0</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                            <span>3⭐</span>
+                            <div style="flex: 1; height: 8px; background: var(--border-color); border-radius: 4px;">
+                                <div style="width: 0%; height: 100%; background: var(--secondary-color); border-radius: 4px;"></div>
+                            </div>
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">0</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                            <span>2⭐</span>
+                            <div style="flex: 1; height: 8px; background: var(--border-color); border-radius: 4px;">
+                                <div style="width: 0%; height: 100%; background: var(--secondary-color); border-radius: 4px;"></div>
+                            </div>
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">0</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span>1⭐</span>
+                            <div style="flex: 1; height: 8px; background: var(--border-color); border-radius: 4px;">
+                                <div style="width: 0%; height: 100%; background: var(--secondary-color); border-radius: 4px;"></div>
+                            </div>
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="reviews-filter" style="margin-bottom: 1.5rem;">
+                    <select id="reviews-filter" class="form-select" style="max-width: 200px;">
+                        <option value="">All Reviews</option>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="2">2 Stars</option>
+                        <option value="1">1 Star</option>
+                    </select>
+                </div>
+                
+                <div id="reviews-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Reminder</h3>
+            <form id="edit-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-group">
+                    <label class="form-label" for="edit-medicine-name">Medicine Name</label>
+                    <input type="text" id="edit-medicine-name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Times</label>
+                    <div class="time-inputs" id="edit-time-inputs"></div>
+                    <button type="button" class="add-time" onclick="addEditTimeInput()">+ Add Time</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="edit-category">Category</label>
+                    <select id="edit-category" class="form-select">
+                        <option value="morning">Morning</option>
+                        <option value="afternoon">Afternoon</option>
+                        <option value="night">Night</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="edit-stock">Pills in Stock</label>
+                    <input type="number" id="edit-stock" class="form-input" min="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="edit-notes">Notes</label>
+                    <input type="text" id="edit-notes" class="form-input">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let reminders = JSON.parse(localStorage.getItem('medicineReminders')) || [];
+        let history = JSON.parse(localStorage.getItem('medicineHistory')) || [];
+        let settings = JSON.parse(localStorage.getItem('medicineSettings')) || {
+            notificationSound: 'beep',
+            lowStockThreshold: 5,
+            theme: 'light'
+        };
+        let reviews = JSON.parse(localStorage.getItem('medicineReviews')) || [];
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Enhanced notification permission request with user interaction
+            requestNotificationPermission();
+
+            // Load theme
+            document.documentElement.setAttribute('data-theme', settings.theme);
+            
+            // Load settings
+            document.getElementById('notification-sound').value = settings.notificationSound;
+            document.getElementById('low-stock-threshold').value = settings.lowStockThreshold;
+
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Start reminder checking
+            startReminderChecker();
+            
+            // Start real-time clock
+            startClock();
+            
+            // Render initial data
+            renderReminders();
+            renderHistory();
+            renderReviews();
+
+            // Register service worker for PWA (only on HTTPS)
+            if ('serviceWorker' in navigator && location.protocol === 'https:') {
+                navigator.serviceWorker.register(createServiceWorker());
+            }
+        }
+
+        // Enhanced notification permission function
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                console.warn('This browser does not support notifications');
+                showNotification('Your browser does not support notifications', 'warning');
+                return;
+            }
+
+            if (Notification.permission === 'default') {
+                // Show a user-friendly prompt first
+                const enableNotifications = confirm(
+                    '💊 Medicine Reminder would like to send you notifications.\n\n' +
+                    'This will help ensure you never miss your medicine times!\n\n' +
+                    'Click OK to enable notifications.'
+                );
+                
+                if (enableNotifications) {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            showNotification('Notifications enabled! You\'ll get reminders at your scheduled times.', 'success');
+                        } else if (permission === 'denied') {
+                            showNotification('Notifications blocked. You can enable them in your browser settings.', 'warning');
+                        }
+                    });
+                }
+            } else if (Notification.permission === 'denied') {
+                showNotification('Notifications are blocked. Please enable them in your browser settings for the best experience.', 'warning');
+            }
+        }
+
+        function setupEventListeners() {
+            // Form submissions
+            document.getElementById('reminder-form').addEventListener('submit', addReminder);
+            document.getElementById('edit-form').addEventListener('submit', updateReminder);
+            document.getElementById('feedback-form').addEventListener('submit', submitFeedback);
+            
+            // Search and filter
+            document.getElementById('search-input').addEventListener('input', filterReminders);
+            document.getElementById('filter-category').addEventListener('change', filterReminders);
+            document.getElementById('reviews-filter').addEventListener('change', filterReviews);
+            
+            // Settings
+            document.getElementById('notification-sound').addEventListener('change', updateSettings);
+            document.getElementById('low-stock-threshold').addEventListener('change', updateSettings);
+            
+            // Star rating
+            setupStarRating();
+        }
+
+        // Tab Management
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Refresh content if needed
+            if (tabName === 'list') renderReminders();
+            if (tabName === 'history') renderHistory();
+            if (tabName === 'reviews') renderReviews();
+        }
+
+        // Theme Management
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            settings.theme = newTheme;
+            saveSettings();
+        }
+
+        // Time Input Management
+        function addTimeInput() {
+            const timeInputs = document.getElementById('time-inputs');
+            const newRow = document.createElement('div');
+            newRow.className = 'time-input-row';
+            newRow.innerHTML = `
+                <input type="time" class="form-input time-input" required>
+                <button type="button" class="remove-time" onclick="removeTimeInput(this)">×</button>
+            `;
+            timeInputs.appendChild(newRow);
+        }
+
+        function removeTimeInput(button) {
+            button.parentElement.remove();
+        }
+
+        function addEditTimeInput() {
+            const timeInputs = document.getElementById('edit-time-inputs');
+            const newRow = document.createElement('div');
+            newRow.className = 'time-input-row';
+            newRow.innerHTML = `
+                <input type="time" class="form-input time-input" required>
+                <button type="button" class="remove-time" onclick="removeTimeInput(this)">×</button>
+            `;
+            timeInputs.appendChild(newRow);
+        }
+
+        // Reminder Management
+        function addReminder(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const times = Array.from(document.querySelectorAll('#time-inputs .time-input')).map(input => input.value);
+            
+            const reminder = {
+                id: Date.now().toString(),
+                name: document.getElementById('medicine-name').value,
+                times: times,
+                category: document.getElementById('category').value,
+                frequency: document.getElementById('frequency').value,
+                stock: parseInt(document.getElementById('stock').value) || 0,
+                notes: document.getElementById('notes').value,
+                active: true,
+                created: new Date().toISOString()
+            };
+            
+            reminders.push(reminder);
+            saveReminders();
+            
+            // Reset form
+            e.target.reset();
+            document.getElementById('time-inputs').innerHTML = `
+                <div class="time-input-row">
+                    <input type="time" class="form-input time-input" required>
+                </div>
+            `;
+            
+            showNotification('Reminder added successfully!', 'success');
+            switchTab('list');
+        }
+
+        function editReminder(id) {
+            const reminder = reminders.find(r => r.id === id);
+            if (!reminder) return;
+            
+            // Populate edit form
+            document.getElementById('edit-id').value = reminder.id;
+            document.getElementById('edit-medicine-name').value = reminder.name;
+            document.getElementById('edit-category').value = reminder.category;
+            document.getElementById('edit-stock').value = reminder.stock;
+            document.getElementById('edit-notes').value = reminder.notes;
+            
+            // Populate times
+            const timeInputs = document.getElementById('edit-time-inputs');
+            timeInputs.innerHTML = '';
+            reminder.times.forEach((time, index) => {
+                const row = document.createElement('div');
+                row.className = 'time-input-row';
+                row.innerHTML = `
+                    <input type="time" class="form-input time-input" value="${time}" required>
+                    ${index > 0 ? '<button type="button" class="remove-time" onclick="removeTimeInput(this)">×</button>' : ''}
+                `;
+                timeInputs.appendChild(row);
+            });
+            
+            document.getElementById('edit-modal').classList.add('active');
+        }
+
+        function updateReminder(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('edit-id').value;
+            const reminderIndex = reminders.findIndex(r => r.id === id);
+            
+            if (reminderIndex === -1) return;
+            
+            const times = Array.from(document.querySelectorAll('#edit-time-inputs .time-input')).map(input => input.value);
+            
+            reminders[reminderIndex] = {
+                ...reminders[reminderIndex],
+                name: document.getElementById('edit-medicine-name').value,
+                times: times,
+                category: document.getElementById('edit-category').value,
+                stock: parseInt(document.getElementById('edit-stock').value) || 0,
+                notes: document.getElementById('edit-notes').value
+            };
+            
+            saveReminders();
+            closeEditModal();
+            renderReminders();
+            showNotification('Reminder updated successfully!', 'success');
+        }
+
+        function deleteReminder(id) {
+            if (confirm('Are you sure you want to delete this reminder?')) {
+                reminders = reminders.filter(r => r.id !== id);
+                saveReminders();
+                renderReminders();
+                showNotification('Reminder deleted successfully!', 'success');
+            }
+        }
+
+        function toggleReminder(id) {
+            const reminder = reminders.find(r => r.id === id);
+            if (reminder) {
+                reminder.active = !reminder.active;
+                saveReminders();
+                renderReminders();
+            }
+        }
+
+        function markAsTaken(id, time) {
+            const reminder = reminders.find(r => r.id === id);
+            if (!reminder) return;
+            
+            // Add to history
+            const historyEntry = {
+                id: Date.now().toString(),
+                reminderName: reminder.name,
+                scheduledTime: time,
+                takenTime: new Date().toISOString(),
+                notes: reminder.notes
+            };
+            
+            history.unshift(historyEntry);
+            
+            // Update stock
+            if (reminder.stock > 0) {
+                reminder.stock--;
+                
+                // Check for low stock
+                if (reminder.stock <= settings.lowStockThreshold) {
+                    showNotification(`Low stock alert: ${reminder.name} has ${reminder.stock} pills remaining`, 'warning');
+                }
+            }
+            
+            saveHistory();
+            saveReminders();
+            renderReminders();
+            renderHistory();
+            
+            showNotification(`Marked ${reminder.name} as taken`, 'success');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.remove('active');
+        }
+
+        // Rendering Functions
+        function renderReminders() {
+            const container = document.getElementById('reminders-list');
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const categoryFilter = document.getElementById('filter-category').value;
+            
+            let filteredReminders = reminders.filter(reminder => {
+                const matchesSearch = reminder.name.toLowerCase().includes(searchTerm);
+                const matchesCategory = !categoryFilter || reminder.category === categoryFilter;
+                return matchesSearch && matchesCategory;
+            });
+            
+            if (filteredReminders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <h3>No reminders found</h3>
+                        <p>Add your first medicine reminder to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredReminders.map(reminder => `
+                <div class="reminder-item">
+                    <div class="reminder-header">
+                        <div class="reminder-name">${reminder.name}</div>
+                        <span class="reminder-category category-${reminder.category}">${reminder.category}</span>
+                    </div>
+                    
+                    <div class="reminder-times">
+                        ${reminder.times.map(time => `<span class="time-badge">${formatTime(time)}</span>`).join('')}
+                    </div>
+                    
+                    ${reminder.notes ? `<p style="color: var(--text-secondary); margin: 0.5rem 0;">${reminder.notes}</p>` : ''}
+                    
+                    <div class="stock-info">
+                        <span class="stock-${getStockStatus(reminder.stock)}">
+                            📦 ${reminder.stock} pills remaining
+                        </span>
+                    </div>
+                    
+                    <div class="reminder-actions">
+                        ${reminder.times.map(time => `
+                            <button class="btn btn-secondary btn-small" onclick="markAsTaken('${reminder.id}', '${time}')">
+                                ✓ Taken (${formatTime(time)})
+                            </button>
+                        `).join('')}
+                        <button class="btn btn-primary btn-small" onclick="editReminder('${reminder.id}')">Edit</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteReminder('${reminder.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('history-list');
+            
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M13,3A9,9 0 0,0 4,12H1L4.89,15.89L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3Z"/>
+                        </svg>
+                        <h3>No history yet</h3>
+                        <p>Your medicine history will appear here once you start taking your medicines.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = history.slice(0, 50).map(entry => `
+                <div class="reminder-item">
+                    <div class="reminder-header">
+                        <div class="reminder-name">${entry.reminderName}</div>
+                        <span style="font-size: 0.875rem; color: var(--text-secondary);">
+                            ${formatDateTime(entry.takenTime)}
+                        </span>
+                    </div>
+                    <p style="color: var(--text-secondary); margin: 0.5rem 0;">
+                        Scheduled: ${formatTime(entry.scheduledTime)} | 
+                        Taken: ${formatDateTime(entry.takenTime)}
+                    </p>
+                    ${entry.notes ? `<p style="color: var(--text-secondary); font-size: 0.875rem;">${entry.notes}</p>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Real-time Clock for Testing
+        function startClock() {
+            function updateClock() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], { 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit',
+                    hour12: true 
+                });
+                const clockElement = document.getElementById('current-time');
+                if (clockElement) {
+                    clockElement.textContent = timeString;
+                }
+            }
+            
+            updateClock(); // Update immediately
+            setInterval(updateClock, 1000); // Update every second
+        }
+
+        // Notification System - Enhanced for Immediate Response
+        function startReminderChecker() {
+            // Check every 1 second for immediate response
+            setInterval(checkReminders, 1000);
+            checkReminders(); // Check immediately
+        }
+
+        function checkReminders() {
+            const now = new Date();
+            const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            const currentSeconds = now.getSeconds();
+            
+            // Only check at the start of each minute (0-2 seconds) for immediate response
+            if (currentSeconds <= 2) {
+                console.log(`🕐 Checking reminders at ${currentTime}:${currentSeconds.toString().padStart(2, '0')}`);
+                
+                reminders.forEach(reminder => {
+                    if (!reminder.active) return;
+                    
+                    reminder.times.forEach(time => {
+                        if (time === currentTime) {
+                            // Create a unique key that includes date, time, and reminder ID
+                            const notificationKey = `${reminder.id}-${time}-${now.getDate()}-${now.getMonth()}-${now.getFullYear()}-${now.getHours()}-${now.getMinutes()}`;
+                            
+                            // Check if we've already sent this exact notification
+                            const sentNotifications = JSON.parse(localStorage.getItem('sentNotifications') || '{}');
+                            
+                            if (!sentNotifications[notificationKey]) {
+                                console.log(`🔔 MATCH FOUND! Triggering notification for ${reminder.name} at ${time}`);
+                                
+                                // Mark this notification as sent
+                                sentNotifications[notificationKey] = true;
+                                localStorage.setItem('sentNotifications', JSON.stringify(sentNotifications));
+                                
+                                // Clean up old notifications (keep only today's)
+                                const today = `${now.getDate()}-${now.getMonth()}-${now.getFullYear()}`;
+                                Object.keys(sentNotifications).forEach(key => {
+                                    if (!key.includes(today)) {
+                                        delete sentNotifications[key];
+                                    }
+                                });
+                                localStorage.setItem('sentNotifications', JSON.stringify(sentNotifications));
+                                
+                                // Show notification IMMEDIATELY
+                                showMedicineNotification(reminder, time);
+                            }
+                        }
+                    });
+                });
+            }
+        }
+
+        function showMedicineNotification(reminder, time) {
+            console.log('🔔 Attempting to show notification for:', reminder.name, 'at', time);
+            
+            // Always show in-app notification first (this always works)
+            showInAppNotification(`💊 Time for ${reminder.name}!`, 'reminder', {
+                time: formatTime(time),
+                notes: reminder.notes,
+                onTaken: () => markAsTaken(reminder.id, time)
+            });
+            
+            // Play sound (this always works)
+            playNotificationSound();
+            
+            // Flash page title if tab is hidden
+            if (document.hidden) {
+                flashPageTitle(`💊 ${reminder.name} - Medicine Reminder`);
+            }
+            
+            // Try browser notification if supported and permitted
+            if (!('Notification' in window)) {
+                console.warn('Browser notifications not supported');
+                return;
+            }
+
+            if (Notification.permission === 'granted') {
+                try {
+                    console.log('✅ Creating browser notification...');
+                    
+                    const notificationOptions = {
+                        body: `💊 Scheduled for ${formatTime(time)}\n${reminder.notes ? '📝 ' + reminder.notes : ''}`,
+                        icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNEY0NkU1Ij48cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptLTIgMTVsLTUtNSAxLjQxLTEuNDFMMTAgMTQuMTdsNy41OS03LjU5TDE5IDhsLTkgOXoiLz48L3N2Zz4=',
+                        tag: `medicine-${reminder.id}-${time}-${Date.now()}`,
+                        requireInteraction: true,
+                        silent: false,
+                        vibrate: [200, 100, 200, 100, 200],
+                        timestamp: Date.now(),
+                        renotify: true
+                    };
+
+                    const notification = new Notification(`💊 Time for ${reminder.name}!`, notificationOptions);
+                    
+                    console.log('✅ Browser notification created successfully');
+                    
+                    // Auto-close after 15 seconds
+                    setTimeout(() => {
+                        if (notification) {
+                            notification.close();
+                        }
+                    }, 15000);
+                    
+                    notification.onclick = () => {
+                        console.log('🖱️ Notification clicked');
+                        window.focus();
+                        markAsTaken(reminder.id, time);
+                        notification.close();
+                    };
+
+                    notification.onerror = (error) => {
+                        console.error('❌ Notification error:', error);
+                    };
+
+                } catch (error) {
+                    console.error('❌ Failed to create notification:', error);
+                }
+            } else if (Notification.permission === 'denied') {
+                console.warn('⚠️ Notifications are blocked by user');
+            } else {
+                console.warn('⚠️ Notification permission not granted');
+                // Try to request permission
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        console.log('✅ Permission granted, retrying notification...');
+                        showMedicineNotification(reminder, time);
+                    }
+                });
+            }
+        }
+
+        function playNotificationSound() {
+            try {
+                // Create audio context for sound generation
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Create multiple oscillators for a richer, louder sound
+                const createTone = (frequency, duration, delay = 0) => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + delay);
+                    oscillator.type = 'sine';
+                    
+                    // Much louder volume
+                    gainNode.gain.setValueAtTime(0.8, audioContext.currentTime + delay);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + delay + duration);
+                    
+                    oscillator.start(audioContext.currentTime + delay);
+                    oscillator.stop(audioContext.currentTime + delay + duration);
+                };
+                
+                // Configure sound based on settings with multiple tones for alerting effect
+                const soundType = settings.notificationSound;
+                switch (soundType) {
+                    case 'beep':
+                        // Triple beep pattern - very alerting
+                        createTone(800, 0.3, 0);
+                        createTone(800, 0.3, 0.4);
+                        createTone(800, 0.3, 0.8);
+                        break;
+                    case 'chime':
+                        // Ascending chime pattern
+                        createTone(523.25, 0.4, 0);    // C5
+                        createTone(659.25, 0.4, 0.2);  // E5
+                        createTone(783.99, 0.6, 0.4);  // G5
+                        break;
+                    case 'bell':
+                        // Bell with harmonics for richness
+                        createTone(659.25, 1.0, 0);    // Fundamental
+                        createTone(1318.5, 0.8, 0);    // Octave
+                        createTone(987.77, 0.6, 0);    // Fifth
+                        break;
+                }
+            } catch (error) {
+                console.warn('Audio notification failed:', error);
+                // Fallback: try to play a system beep
+                if (window.speechSynthesis) {
+                    const utterance = new SpeechSynthesisUtterance('');
+                    utterance.volume = 0;
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
+        }
+
+        function testSound() {
+            playNotificationSound();
+        }
+
+        // Test notification permission status
+        function testNotificationPermission() {
+            if (!('Notification' in window)) {
+                alert('❌ Notifications are not supported in this browser');
+                return;
+            }
+
+            const permission = Notification.permission;
+            let message = '';
+            
+            switch (permission) {
+                case 'granted':
+                    message = '✅ Notifications are ENABLED\n\nYou will receive medicine reminders!';
+                    break;
+                case 'denied':
+                    message = '❌ Notifications are BLOCKED\n\nTo enable:\n1. Click the lock/info icon in your address bar\n2. Set notifications to "Allow"\n3. Refresh the page';
+                    break;
+                case 'default':
+                    message = '⚠️ Notification permission not set\n\nClick OK to enable notifications now.';
+                    if (confirm(message)) {
+                        requestNotificationPermission();
+                    }
+                    return;
+            }
+            
+            alert(message);
+        }
+
+        // Test notification functionality
+        function testNotification() {
+            if (!('Notification' in window)) {
+                alert('❌ Notifications are not supported in this browser');
+                return;
+            }
+
+            if (Notification.permission !== 'granted') {
+                alert('❌ Notifications are not enabled\n\nPlease click "Check Permissions" first to enable notifications.');
+                return;
+            }
+
+            // Create test notification
+            try {
+                const notification = new Notification('💊 Test Notification', {
+                    body: 'This is a test notification from Medicine Reminder!\nIf you can see this, notifications are working perfectly! 🎉',
+                    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjNEY0NkU1Ij48cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptLTIgMTVsLTUtNSAxLjQxLTEuNDFMMTAgMTQuMTdsNy41OS03LjU5TDE5IDhsLTkgOXoiLz48L3N2Zz4=',
+                    tag: 'test-notification',
+                    requireInteraction: false
+                });
+
+                // Auto-close after 5 seconds
+                setTimeout(() => {
+                    if (notification) {
+                        notification.close();
+                    }
+                }, 5000);
+
+                // Play test sound
+                playNotificationSound();
+                
+                // Show in-app confirmation
+                showNotification('Test notification sent! Check if you received it.', 'success');
+                
+            } catch (error) {
+                console.error('Notification test failed:', error);
+                alert('❌ Notification test failed\n\nError: ' + error.message);
+            }
+        }
+
+
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = 'notification show';
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span>${getNotificationIcon(type)}</span>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function showInAppNotification(message, type = 'info', options = {}) {
+            const notification = document.createElement('div');
+            notification.className = 'notification show';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--card-bg);
+                border: 2px solid var(--primary-color);
+                border-radius: 12px;
+                padding: 1.5rem;
+                box-shadow: var(--shadow-lg);
+                z-index: 1001;
+                max-width: 350px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                animation: pulse 2s infinite;
+            `;
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                    <span style="font-size: 2rem;">${getNotificationIcon(type)}</span>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">${message}</div>
+                        ${options.time ? `<div style="color: var(--text-secondary); font-size: 0.875rem;">Scheduled: ${options.time}</div>` : ''}
+                        ${options.notes ? `<div style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.25rem;">${options.notes}</div>` : ''}
+                        ${options.onTaken ? `
+                            <button onclick="this.parentElement.parentElement.parentElement.remove(); (${options.onTaken.toString()})()" 
+                                    style="background: var(--secondary-color); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; margin-top: 1rem; cursor: pointer;">
+                                ✓ Mark as Taken
+                            </button>
+                        ` : ''}
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-secondary);">×</button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+            
+            // Auto-dismiss after 15 seconds for medicine reminders
+            if (type === 'reminder') {
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.style.transform = 'translateX(100%)';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 15000);
+            } else {
+                // Regular notifications dismiss after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.style.transform = 'translateX(100%)';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 5000);
+            }
+        }
+
+        function flashPageTitle(message) {
+            const originalTitle = document.title;
+            let isFlashing = true;
+            let flashCount = 0;
+            const maxFlashes = 10;
+            
+            const flashInterval = setInterval(() => {
+                if (flashCount >= maxFlashes || !document.hidden) {
+                    document.title = originalTitle;
+                    clearInterval(flashInterval);
+                    return;
+                }
+                
+                document.title = isFlashing ? message : originalTitle;
+                isFlashing = !isFlashing;
+                flashCount++;
+            }, 1000);
+            
+            // Stop flashing when user returns to tab
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    document.title = originalTitle;
+                    clearInterval(flashInterval);
+                }
+            }, { once: true });
+        }
+
+        function getNotificationIcon(type) {
+            switch (type) {
+                case 'success': return '✅';
+                case 'warning': return '⚠️';
+                case 'error': return '❌';
+                case 'reminder': return '💊';
+                default: return 'ℹ️';
+            }
+        }
+
+        // Utility Functions
+        function formatTime(time) {
+            // Handle test notifications
+            if (time === 'test-time') {
+                return 'Test Time';
+            }
+            
+            if (time.includes(':')) {
+                const [hours, minutes] = time.split(':');
+                const hour = parseInt(hours);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const displayHour = hour % 12 || 12;
+                return `${displayHour}:${minutes} ${ampm}`;
+            }
+            return new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatDateTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function getStockStatus(stock) {
+            if (stock <= settings.lowStockThreshold) return 'low';
+            if (stock <= settings.lowStockThreshold * 2) return 'medium';
+            return 'good';
+        }
+
+        function filterReminders() {
+            renderReminders();
+        }
+
+        // Settings Management
+        function updateSettings() {
+            settings.notificationSound = document.getElementById('notification-sound').value;
+            settings.lowStockThreshold = parseInt(document.getElementById('low-stock-threshold').value);
+            saveSettings();
+        }
+
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+                reminders = [];
+                history = [];
+                localStorage.removeItem('medicineReminders');
+                localStorage.removeItem('medicineHistory');
+                renderReminders();
+                renderHistory();
+                showNotification('All data cleared successfully!', 'success');
+            }
+        }
+
+        // Feedback and Reviews Management
+        function setupStarRating() {
+            const stars = document.querySelectorAll('.star');
+            const ratingInput = document.getElementById('feedback-rating');
+            
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const rating = parseInt(star.dataset.rating);
+                    ratingInput.value = rating;
+                    
+                    // Update star display
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+                
+                star.addEventListener('mouseenter', () => {
+                    const rating = parseInt(star.dataset.rating);
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.style.opacity = '1';
+                        } else {
+                            s.style.opacity = '0.3';
+                        }
+                    });
+                });
+            });
+            
+            // Reset on mouse leave
+            document.getElementById('star-rating').addEventListener('mouseleave', () => {
+                const currentRating = parseInt(ratingInput.value) || 0;
+                stars.forEach((s, index) => {
+                    if (index < currentRating) {
+                        s.style.opacity = '1';
+                    } else {
+                        s.style.opacity = '0.3';
+                    }
+                });
+            });
+        }
+
+        function submitFeedback(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('feedback-name').value;
+            const rating = parseInt(document.getElementById('feedback-rating').value);
+            const message = document.getElementById('feedback-message').value;
+            const email = document.getElementById('feedback-email').value;
+            
+            if (!rating) {
+                showNotification('Please select a star rating!', 'error');
+                return;
+            }
+            
+            const feedback = {
+                id: Date.now().toString(),
+                name: name,
+                rating: rating,
+                message: message,
+                email: email,
+                date: new Date().toISOString()
+            };
+            
+            // Add to reviews
+            reviews.unshift(feedback);
+            saveReviews();
+            
+            // Reset form
+            e.target.reset();
+            document.getElementById('feedback-rating').value = '';
+            document.querySelectorAll('.star').forEach(star => star.classList.remove('active'));
+            
+            showNotification('Thank you for your feedback! 🙏', 'success');
+            
+            // Switch to reviews tab to show the new review
+            switchTab('reviews');
+        }
+
+        function renderReviews() {
+            const container = document.getElementById('reviews-list');
+            const filterRating = document.getElementById('reviews-filter').value;
+            
+            let filteredReviews = reviews;
+            if (filterRating) {
+                filteredReviews = reviews.filter(review => review.rating === parseInt(filterRating));
+            }
+            
+            // Update summary statistics
+            updateReviewsSummary();
+            
+            if (filteredReviews.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                        </svg>
+                        <h3>No reviews found</h3>
+                        <p>No reviews match the selected filter.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredReviews.map(review => `
+                <div class="review-item">
+                    <div class="review-header">
+                        <div>
+                            <div class="review-author">${review.name}</div>
+                            <div class="review-date">${formatDate(review.date)}</div>
+                        </div>
+                        <div class="review-stars">${generateStars(review.rating)}</div>
+                    </div>
+                    <div class="review-message">${review.message}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateReviewsSummary() {
+            const totalReviews = reviews.length;
+            
+            if (totalReviews === 0) {
+                document.getElementById('average-rating').textContent = '0.0';
+                document.getElementById('average-stars').textContent = '☆☆☆☆☆';
+                document.getElementById('total-reviews').textContent = 'No reviews yet';
+                
+                // Reset all bars to 0%
+                const breakdown = document.getElementById('rating-breakdown');
+                const bars = breakdown.querySelectorAll('div[style*="width"]');
+                const counts = breakdown.querySelectorAll('span[style*="font-size: 0.875rem"]');
+                
+                for (let i = 0; i < 5; i++) {
+                    if (bars[i]) {
+                        bars[i].style.width = '0%';
+                    }
+                    if (counts[i]) {
+                        counts[i].textContent = '0';
+                    }
+                }
+                return;
+            }
+            
+            const averageRating = reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews;
+            
+            // Count ratings
+            const ratingCounts = [0, 0, 0, 0, 0]; // Index 0 = 1 star, Index 4 = 5 stars
+            reviews.forEach(review => {
+                ratingCounts[review.rating - 1]++;
+            });
+            
+            // Update display
+            document.getElementById('average-rating').textContent = averageRating.toFixed(1);
+            document.getElementById('average-stars').textContent = generateStars(Math.round(averageRating));
+            document.getElementById('total-reviews').textContent = `Based on ${totalReviews} review${totalReviews === 1 ? '' : 's'}`;
+            
+            // Update breakdown bars
+            const breakdown = document.getElementById('rating-breakdown');
+            const bars = breakdown.querySelectorAll('div[style*="width"]');
+            const counts = breakdown.querySelectorAll('span[style*="font-size: 0.875rem"]');
+            
+            for (let i = 0; i < 5; i++) {
+                const percentage = totalReviews > 0 ? (ratingCounts[4 - i] / totalReviews) * 100 : 0;
+                if (bars[i]) {
+                    bars[i].style.width = `${percentage}%`;
+                }
+                if (counts[i]) {
+                    counts[i].textContent = ratingCounts[4 - i];
+                }
+            }
+        }
+
+        function generateStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                stars += i <= rating ? '⭐' : '☆';
+            }
+            return stars;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        function filterReviews() {
+            renderReviews();
+        }
+
+        // Data Persistence
+        function saveReminders() {
+            localStorage.setItem('medicineReminders', JSON.stringify(reminders));
+        }
+
+        function saveHistory() {
+            localStorage.setItem('medicineHistory', JSON.stringify(history));
+        }
+
+        function saveSettings() {
+            localStorage.setItem('medicineSettings', JSON.stringify(settings));
+        }
+
+        function saveReviews() {
+            localStorage.setItem('medicineReviews', JSON.stringify(reviews));
+        }
+
+        // PWA Service Worker
+        function createServiceWorker() {
+            const swCode = `
+                const CACHE_NAME = 'medicine-reminder-v1';
+                const urlsToCache = [
+                    '/',
+                    '/index.html'
+                ];
+
+                self.addEventListener('install', event => {
+                    event.waitUntil(
+                        caches.open(CACHE_NAME)
+                            .then(cache => cache.addAll(urlsToCache))
+                    );
+                });
+
+                self.addEventListener('fetch', event => {
+                    event.respondWith(
+                        caches.match(event.request)
+                            .then(response => {
+                                if (response) {
+                                    return response;
+                                }
+                                return fetch(event.request);
+                            })
+                    );
+                });
+            `;
+            
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            return URL.createObjectURL(blob);
+        }
+
+        // Click outside modal to close
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                closeEditModal();
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96e6c5a4b39f1794',t:'MTc1NTA3MzAwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
